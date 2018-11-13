@@ -25,13 +25,26 @@ RUN git clone --depth=1 git://git.osdn.net/gitroot/android-x86/system-core.git -
 && gcc mkbootfs.c -o mkbootfs -I../include -lcutils -L/usr/lib/x86_64-linux-gnu/android/ \
 && cp mkbootfs /usr/local/bin/
 
+FROM ubuntu:bionic AS extfstools
+RUN apt-get update \
+&& apt-get install -y build-essential git clang libboost-dev libstdc++-5-dev \
+&& rm -rf /var/lib/apt/lists
+
+RUN git clone --depth=1 https://github.com/petib/extfstools \
+&& cd extfstools \
+&& make \
+&& cp ext2rd /usr/local/bin \
+&& cp ext2dump /usr/local/bin
+
 FROM ubuntu:bionic
 
 COPY --from=grub /grub /
 COPY --from=mkbootfs /usr/local/bin/mkbootfs /usr/local/bin/
+COPY --from=extfstools /usr/local/bin/ext2rd /usr/local/bin/
+COPY --from=extfstools /usr/local/bin/ext2dump /usr/local/bin/
 
 RUN apt-get update \
-&& apt-get install -y qemu-utils android-libcutils-dev wget genisoimage squashfs-tools cpio e2tools p7zip-full \
+&& apt-get install -y qemu-utils android-libcutils-dev wget genisoimage squashfs-tools cpio e2tools \
 && rm -rf /var/lib/apt/lists*
 
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu/android
