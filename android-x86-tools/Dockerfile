@@ -31,7 +31,7 @@ COPY --from=grub /grub /
 COPY --from=mkbootfs /usr/local/bin/mkbootfs /usr/local/bin/
 
 RUN apt-get update \
-&& apt-get install -y qemu-utils android-libcutils-dev wget genisoimage squashfs-tools cpio e2tools p7zip \
+&& apt-get install -y qemu-utils android-libcutils-dev wget genisoimage squashfs-tools cpio e2tools p7zip-full \
 && rm -rf /var/lib/apt/lists*
 
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu/android
