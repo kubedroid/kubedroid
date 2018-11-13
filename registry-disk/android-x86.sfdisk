@@ -1,0 +1,6 @@
+label: dos
+label-id: 0x4d23e1e7
+device: android-x86
+unit: sectors
+
+android-x86 : start=1MiB, size=-, type=83, bootable
