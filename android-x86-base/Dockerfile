@@ -5,14 +5,16 @@ ENV ISO_FILE=android-x86_64-7.1-r2.iso
 
 WORKDIR /android
 
-# Download the ISO file
-RUN wget $ISO_URL -O $ISO_FILE \
+# Download the ISO file. You can cache this file locally, to save
+# bandwidth
+COPY *.iso .
+RUN if [ ! -f $ISO_FILE ]; then wget -nc $ISO_URL -O $ISO_FILE; fi \
 
 # Extract the root file system
 && isoinfo -i $ISO_FILE -x /system.sfs > system.sfs \
 && unsquashfs -f -d . system.sfs system.img \
-&& 7z x system.img -osystem/ \
-&& rm -rf system/'[SYS]' system/lost+found \
+&& ext2rd system.img ./:system \
+&& rm -rf system/lost+found \
 && rm system.sfs system.img \
 
 # Extract the initrd image
