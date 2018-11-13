@@ -1,6 +1,5 @@
-image_name=android-x86
-image_size=4096
-lofile:=$(shell sudo losetup -f)
-
 docker:
-	sudo docker build . -t quamotion/android-x86:7.1-r2
+	sudo docker build . -t quay.io/quamotion/android-x86:7.1-r2
+
+run:
+	sudo docker run --rm -it quay.io/quamotion/android-x86:7.1-r2 /bin/bash
