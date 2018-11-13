@@ -1,7 +1,7 @@
 FROM ubuntu:bionic AS grub
 
 RUN apt-get update \
-&& apt-get install -y wget build-essential autoconf automake python bison flex \
+&& apt-get install -y wget build-essential autoconf automake python bison flex nano \
 && rm -rf /var/lib/apt/lists/*
 
 RUN wget -nv -nc ftp://ftp.gnu.org/gnu/grub/grub-2.02.tar.xz \
