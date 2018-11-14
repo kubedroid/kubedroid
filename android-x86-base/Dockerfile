@@ -17,6 +17,7 @@ RUN if [ ! -f $ISO_FILE ]; then wget -nc $ISO_URL -O $ISO_FILE; fi \
 && mkdir system \
 && ext2rd system.img ./:system \
 && rm -rf system/lost+found \
+&& rm -rf system.sfs system.img \
 #
 # Extract the initrd image
 #
