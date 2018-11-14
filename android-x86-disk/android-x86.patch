@@ -1,0 +1,18 @@
+--- a/system/build.prop
++++ b/system/build.prop
+@@ -65,7 +65,7 @@
+ ro.com.google.clientidbase.am=android-asus
+ ro.com.google.clientidbase.gmm=android-asus
+ ro.com.google.clientidbase.yt=android-asus
+-ro.setupwizard.mode=ENABLED
++ro.setupwizard.mode=EMULATOR
+ ro.dalvik.vm.isa.arm=x86
+ ro.enable.native.bridge.exec=1
+ ro.dalvik.vm.isa.arm64=x86_64
+@@ -81,3 +81,5 @@
+ dalvik.vm.lockprof.threshold=500
+ net.bt.name=Android
+ dalvik.vm.stack-trace-file=/data/anr/traces.txt
++service.adb.tcp.port=5555
++persist.adb.tcp.port=5555
+
