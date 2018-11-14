@@ -30,7 +30,7 @@ RUN apt-get update \
 && apt-get install -y build-essential git clang libboost-dev libstdc++-5-dev \
 && rm -rf /var/lib/apt/lists
 
-RUN git clone --depth=1 https://github.com/petib/extfstools \
+RUN git clone --depth=1 https://github.com/qmfrederik/extfstools \
 && cd extfstools \
 && make \
 && cp ext2rd /usr/local/bin \
