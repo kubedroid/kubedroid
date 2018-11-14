@@ -37,10 +37,22 @@ FROM quay.io/quamotion/android-x86-base:7.1-r2 AS base
 
 ENV image_name=android-x86
 
-# Update the ramdisk and initrd images
 WORKDIR /android
+# Apply the patches
+COPY *.patch .
+RUN apt-get update \
+&& apt-get install -y patch \
+&& echo system/build.prop \
+&& ls -l *.patch \
+&& patch -p1 < android-x86.patch \
+&& echo system/build.prop \
+&& rm *.patch
+
+# Update the ramdisk and initrd images
 RUN mkbootfs ./ramdisk | gzip > ramdisk.img \
-&& mkbootfs ./initrd | gzip > initrd.img
+&& rm -rf ./ramdisk \
+&& mkbootfs ./initrd | gzip > initrd.img \
+&& rm -rf ./initrd
 
 # Inject the grub configuration
 COPY grub.cfg grub/grub.cfg
@@ -80,6 +92,7 @@ type=83, size=$(( ($image_size - 1) * 1024 * 2)) \
 " | sfdisk /tmp/$image_name.img \
 && fdisk -l /tmp/$image_name.img \
 && mke2fs \
+	-t ext4 \
 	-F \
 	-d /android/ \
         # 1024 bytes per block
