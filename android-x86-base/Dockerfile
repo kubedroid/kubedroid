@@ -9,29 +9,34 @@ WORKDIR /android
 # bandwidth
 COPY *.iso .
 RUN if [ ! -f $ISO_FILE ]; then wget -nc $ISO_URL -O $ISO_FILE; fi \
-
+#
 # Extract the root file system
+#
 && isoinfo -i $ISO_FILE -x /system.sfs > system.sfs \
 && unsquashfs -f -d . system.sfs system.img \
+&& mkdir system \
 && ext2rd system.img ./:system \
 && rm -rf system/lost+found \
-&& rm system.sfs system.img \
-
+#
 # Extract the initrd image
+#
 && isoinfo -i $ISO_FILE -x /initrd.img > initrd.img \
 && mkdir initrd \
 && (cd initrd && zcat ../initrd.img | cpio -idv) \
 && rm initrd.img \
-
+#
 # Extract the ramdisk image
+#
 && isoinfo -i $ISO_FILE -x /ramdisk.img > ramdisk.img \
 && mkdir ramdisk \
 && (cd ramdisk && zcat ../ramdisk.img | cpio -idv) \
 && rm ramdisk.img \
-
+#
 # Extract the kernel
+#
 && isoinfo -i $ISO_FILE -x /kernel > kernel \
-
+#
 # Remove the ISO file
+#
 && rm $ISO_FILE
 
