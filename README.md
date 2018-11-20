@@ -74,7 +74,7 @@ to mount them.
 ### Rebuilding the ramdisk
 Unpacking, modifying and repacking the ramdisk is as simple as:
 
-``
+```
 mkdir ramdisk
 cd ramdisk
 gzip -dc ../ramdisk.img | cpio -i
