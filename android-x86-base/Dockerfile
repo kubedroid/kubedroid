@@ -7,7 +7,10 @@ WORKDIR /android
 
 # Download the ISO file. You can cache this file locally, to save
 # bandwidth
-COPY *.iso .
+# We don't need the Dockerfile, but COPY fails if there are no files
+# to copy (e.g. the iso file doesn't exist). Adding the Dockerfile
+# to keep the command happy.
+COPY *.iso Dockerfile .
 RUN if [ ! -f $ISO_FILE ]; then wget -nc $ISO_URL -O $ISO_FILE; fi \
 #
 # Extract the root file system
