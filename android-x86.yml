@@ -1,0 +1,19 @@
+metadata:
+  name: android-x86
+apiVersion: kubevirt.io/v1alpha2
+kind: VirtualMachineInstance
+spec:
+  domain:
+    resources:
+      requests:
+        memory: 2G
+    devices:
+      disks:
+      - name: registrydisk
+        volumeName: registryvolume
+        disk:
+          bus: virtio
+  volumes:
+    - name: registryvolume
+      registryDisk:
+        image: quay.io/quamotion/android-x86:7.1-r2
