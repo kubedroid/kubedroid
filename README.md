@@ -57,6 +57,50 @@ adb connect `kubectl  get -o=jsonpath='{.status.interfaces[0].ipAddress}' vmi an
 
 ## References
 
+### Hardware acceleration
+
+You may like your Android-x86 VM better if it has hardware acceleration. [You can use Android-x86 with
+virtio (virglrenderer)](https://groups.google.com/forum/#!msg/android-x86/enPcst6oQ_w/8Etr0aEZAAAJ).
+
+With vanilla QEMU on a desktop, the command line would be:
+
+```
+qemu-system-x86_64 \
+    -enable-kvm \
+    -m 2048 -smp 2 -cpu host \
+    -device virtio-mouse-pci -device virtio-keyboard-pci \
+    -serial mon:stdio \
+    -boot menu=on \
+    -netdev user,id=mynet,hostfwd=tcp::5555-:5555 -device virtio-net-pci,netdev=mynet \
+    -vga virtio -display sdl,gl=on $@ \
+    -cdrom ${ANDROID_IMAGE_PATH} \
+    -hda android.img
+```
+
+But:
+
+> `display sdl` means a local (to the node) display will be spawned using SDL
+
+and
+
+> `-spice gl=on,...` works only locally (qemu and spice client must run on the same machine).
+> `-display egl-headless -spice gl=off,...` works remotely.  Not very efficient, it'll effectively do ReadPixels on the rendered framebuffer and send them over spice like non-gl display updates.  But it might still be better than using llvmpipe in the android guest.
+> `-display egl-headless -vnc ...` works too.
+
+
+Net, for this to work with KubeVirt, [we need three things](https://groups.google.com/d/msg/kubevirt-dev/7xYZQtILpJM/KtTqLnO9AAAJ):
+
+1. The latest software:
+   a. libvirt 4.6.0 or newer (you'll need KubeVirt master)
+   b. qemu 2.10 or newer
+2. Configure QEMU to use `/dev/dri/renderD*` 
+3. Launch QEMU with the correct arguments, so that it uses virtio
+
+The plan to get this working is to:
+1. Use a KubeVirt hook to update the domain definition, this is implemented in the android-x86-hook container.
+2. Use the KubeVirt master which has a sufficiently recent version of QEMU and libvirt
+3. Figure out how to pass the `/dev/dri/render*` device to QEMU
+
 ### Making an Android-x86 disk image
 
 You can create a custom .vhd image which you can use to boot Android-x86 in a VM, using the
