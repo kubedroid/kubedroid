@@ -7,6 +7,11 @@ spec:
     resources:
       requests:
         memory: 2G
+      # This will request an Intel GPU for the Android-x86 pod.
+      # It requires the Intel GPU device plugin, see
+      # https://github.com/intel/intel-device-plugins-for-kubernetes/blob/master/cmd/gpu_plugin/README.md
+      limits:
+        gpu.intel.com/i915: 1
     devices:
       disks:
       - name: registrydisk
