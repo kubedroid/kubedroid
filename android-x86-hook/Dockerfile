@@ -11,7 +11,7 @@ COPY Gopkg.toml Gopkg.lock ./
 RUN dep ensure -vendor-only
 
 # Build the entire project
-COPY *.go .
+COPY *.go ./
 RUN go build
 
 FROM ubuntu:bionic
