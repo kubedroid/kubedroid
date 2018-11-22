@@ -27,11 +27,13 @@ RUN git clone --depth=1 git://git.osdn.net/gitroot/android-x86/system-core.git -
 
 FROM ubuntu:bionic AS extfstools
 RUN apt-get update \
-&& apt-get install -y build-essential git clang libboost-dev libstdc++-5-dev \
+&& apt-get install -y build-essential git clang libboost-dev libstdc++-5-dev autoconf \
 && rm -rf /var/lib/apt/lists
 
 RUN git clone --depth=1 https://github.com/qmfrederik/extfstools \
 && cd extfstools \
+&& ./autogen.sh \
+&& ./configure \
 && make \
 && cp ext2rd /usr/local/bin \
 && cp ext2dump /usr/local/bin
