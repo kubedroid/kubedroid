@@ -122,3 +122,47 @@ func TestOnDefineVideoModel(t *testing.T) {
 		t.Errorf("Unexpected video model")
 	}
 }
+
+func TestOnDefineEglHeadless(t *testing.T) {
+	domainSpec := domainSchema.DomainSpec{}
+	domainSpecXML, err := xml.Marshal(domainSpec)
+	if err != nil {
+		t.Errorf("Failed to marshal JSON")
+	}
+
+	vmi := new(v1.VirtualMachineInstance)
+	annotations := map[string]string{
+		eglHeadlessAnnotation: "yes",
+	}
+
+	vmi.SetAnnotations(annotations)
+	vmiJSON, err := json.Marshal(vmi)
+	if err != nil {
+		t.Errorf("Failed to marshal JSON")
+	}
+
+	params := hooksV1alpha1.OnDefineDomainParams{domainSpecXML, vmiJSON}
+
+	ctx := context.TODO()
+
+	server := new(v1alpha1Server)
+	result, err := server.OnDefineDomain(ctx, &params)
+	if err != nil {
+		t.Errorf("Failed to invoke OnDefineDomain")
+	}
+
+	domainSpecXML = result.GetDomainXML()
+	err = ioutil.WriteFile("domain.graphics.xml", domainSpecXML, 0644)
+	if err != nil {
+		t.Errorf("Failed to save the domain spec")
+	}
+
+	err = xml.Unmarshal(domainSpecXML, &domainSpec)
+	if err != nil {
+		t.Errorf("Failed to unmarshal the domain spec")
+	}
+
+	if domainSpec.Devices.Graphics[0].Type != "egl-headless" {
+		t.Errorf("Unexpected graphics type")
+	}
+}

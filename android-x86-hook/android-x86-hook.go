@@ -39,6 +39,7 @@ import (
 
 const baseBoardManufacturerAnnotation = "smbios.vm.kubevirt.io/baseBoardManufacturer"
 const videoModelAnnotation = "video.vm.kubevirt.io/model"
+const eglHeadlessAnnotation = "graphics.vm.kubevirt.io/eglHeadless"
 const hookName = "android-x86"
 
 type infoServer struct{}
@@ -113,6 +114,17 @@ func (s v1alpha1Server) OnDefineDomain(ctx context.Context, params *hooksV1alpha
 		}
 
 		domainSpec.Devices.Video[0].Model.Type = videoModel
+	}
+
+	if _, found := annotations[eglHeadlessAnnotation]; !found {
+		log.Log.Infof("The '%s' attribute was not provided. Not configuring the egl-headless graphics", eglHeadlessAnnotation)
+	} else {
+		log.Log.Infof("Configuring the egl headless graphics")
+
+		eglHeadlessGraphics := domainSchema.Graphics{
+			Type: "egl-headless",
+		}
+		domainSpec.Devices.Graphics = append(domainSpec.Devices.Graphics, eglHeadlessGraphics)
 	}
 
 	newDomainXML, err := xml.Marshal(domainSpec)
