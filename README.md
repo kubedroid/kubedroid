@@ -91,8 +91,8 @@ and
 Net, for this to work with KubeVirt, [we need three things](https://groups.google.com/d/msg/kubevirt-dev/7xYZQtILpJM/KtTqLnO9AAAJ):
 
 1. The latest software:
-   a. libvirt 4.6.0 or newer (you'll need KubeVirt master)
-   b. qemu 2.10 or newer
+   a. [libvirt 4.6.0 or newer](https://github.com/libvirt/libvirt/commit/d8266ebe1615c4b043db6b8d486465722cdd0ef8) (you'll need KubeVirt master)
+   b. [qemu 2.10 or newer](https://patchwork.kernel.org/patch/10465793/)
 2. Configure QEMU to use `/dev/dri/renderD*` 
 3. Launch QEMU with the correct arguments, so that it uses virtio
 
@@ -100,6 +100,9 @@ The plan to get this working is to:
 1. Use a KubeVirt hook to update the domain definition, this is implemented in the android-x86-hook container.
 2. Use the KubeVirt master which has a sufficiently recent version of QEMU and libvirt
 3. Figure out how to pass the `/dev/dri/render*` device to QEMU
+
+The [libvirt user manual](https://libvirt.org/formatdomain.html#elementsGraphics) has more information
+about the different graphic options available.
 
 ### Making an Android-x86 disk image
 
