@@ -40,6 +40,7 @@ import (
 const baseBoardManufacturerAnnotation = "smbios.vm.kubevirt.io/baseBoardManufacturer"
 const videoModelAnnotation = "video.vm.kubevirt.io/model"
 const eglHeadlessAnnotation = "graphics.vm.kubevirt.io/eglHeadless"
+const qemuArgsAnnotation = "qemu.vm.kubevirt.io/args"
 const hookName = "android-x86"
 
 type infoServer struct{}
@@ -125,6 +126,28 @@ func (s v1alpha1Server) OnDefineDomain(ctx context.Context, params *hooksV1alpha
 			Type: "egl-headless",
 		}
 		domainSpec.Devices.Graphics = append(domainSpec.Devices.Graphics, eglHeadlessGraphics)
+	}
+
+	if qemuArgsString, found := annotations[qemuArgsAnnotation]; !found {
+		log.Log.Infof("The '%s' attribute was not provided. Not configuring additional qemu arguments", qemuArgsAnnotation)
+	} else {
+		log.Log.Infof("Configuring the qemu commands to be '%s'", qemuArgsString)
+
+		var qemuArgs []string
+		err := json.Unmarshal([]byte(qemuArgsString), &qemuArgs)
+		if err != nil {
+			log.Log.Reason(err).Errorf("Failed to unmarshal qemu arguments: '%s'. Ignoring the qemu arguments.", qemuArgsString)
+		} else {
+			if domainSpec.QEMUCmd == nil {
+				domainSpec.QEMUCmd = &domainSchema.Commandline{}
+			}
+
+			for _, qemuArg := range qemuArgs {
+				log.Log.Infof("Adding the qemu argument '%s'", qemuArg)
+
+				domainSpec.QEMUCmd.QEMUArg = append(domainSpec.QEMUCmd.QEMUArg, domainSchema.Arg{qemuArg})
+			}
+		}
 	}
 
 	newDomainXML, err := xml.Marshal(domainSpec)

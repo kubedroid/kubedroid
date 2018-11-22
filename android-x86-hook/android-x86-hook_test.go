@@ -166,3 +166,63 @@ func TestOnDefineEglHeadless(t *testing.T) {
 		t.Errorf("Unexpected graphics type")
 	}
 }
+
+func TestOnDefineQemuArgs(t *testing.T) {
+	domainSpec := domainSchema.DomainSpec{}
+	domainSpecXML, err := xml.Marshal(domainSpec)
+	if err != nil {
+		t.Errorf("Failed to marshal JSON")
+	}
+
+	vmi := new(v1.VirtualMachineInstance)
+	annotations := map[string]string{
+		qemuArgsAnnotation: `[ "-display", "egl-headless" ]`,
+	}
+
+	vmi.SetAnnotations(annotations)
+	vmiJSON, err := json.Marshal(vmi)
+	if err != nil {
+		t.Errorf("Failed to marshal JSON")
+	}
+
+	params := hooksV1alpha1.OnDefineDomainParams{domainSpecXML, vmiJSON}
+
+	ctx := context.TODO()
+
+	server := new(v1alpha1Server)
+	result, err := server.OnDefineDomain(ctx, &params)
+	if err != nil {
+		t.Errorf("Failed to invoke OnDefineDomain")
+	}
+
+	domainSpecXML = result.GetDomainXML()
+	err = ioutil.WriteFile("domain.args.xml", domainSpecXML, 0644)
+	if err != nil {
+		t.Errorf("Failed to save the domain spec")
+	}
+
+	err = xml.Unmarshal(domainSpecXML, &domainSpec)
+	if err != nil {
+		t.Errorf("Failed to unmarshal the domain spec")
+	}
+
+	if domainSpec.QEMUCmd == nil {
+		t.Errorf("QEMU command line must not be null")
+	}
+
+	if domainSpec.QEMUCmd.QEMUArg == nil {
+		t.Errorf("QEMU arguments must not be null")
+	}
+
+	if len(domainSpec.QEMUCmd.QEMUArg) != 2 {
+		t.Errorf("Expected 2 qemu arguments")
+	}
+
+	if domainSpec.QEMUCmd.QEMUArg[0].Value != "-display" {
+		t.Errorf("Unexpected first argument type")
+	}
+
+	if domainSpec.QEMUCmd.QEMUArg[1].Value != "egl-headless" {
+		t.Errorf("Unexpected first argument type")
+	}
+}
