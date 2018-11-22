@@ -14,6 +14,7 @@
  * limitations under the License.
  *
  * Copyright 2018 Red Hat, Inc.
+ * Copyright 2018 Quamotion bvba
  *
  */
 
@@ -37,6 +38,8 @@ import (
 )
 
 const baseBoardManufacturerAnnotation = "smbios.vm.kubevirt.io/baseBoardManufacturer"
+const videoModelAnnotation = "video.vm.kubevirt.io/model"
+const hookName = "android-x86"
 
 type infoServer struct{}
 
@@ -44,7 +47,7 @@ func (s infoServer) Info(ctx context.Context, params *hooksInfo.InfoParams) (*ho
 	log.Log.Info("Hook's Info method has been called")
 
 	return &hooksInfo.InfoResult{
-		Name: "smbios",
+		Name: hookName,
 		Versions: []string{
 			hooksV1alpha1.Version,
 		},
@@ -72,13 +75,6 @@ func (s v1alpha1Server) OnDefineDomain(ctx context.Context, params *hooksV1alpha
 
 	annotations := vmiSpec.GetAnnotations()
 
-	if _, found := annotations[baseBoardManufacturerAnnotation]; !found {
-		log.Log.Info("SM BIOS hook sidecar was requested, but no attributes provided. Returning original domain spec")
-		return &hooksV1alpha1.OnDefineDomainResult{
-			DomainXML: params.GetDomainXML(),
-		}, nil
-	}
-
 	domainXML := params.GetDomainXML()
 	domainSpec := domainSchema.DomainSpec{}
 	err = xml.Unmarshal(domainXML, &domainSpec)
@@ -87,26 +83,45 @@ func (s v1alpha1Server) OnDefineDomain(ctx context.Context, params *hooksV1alpha
 		panic(err)
 	}
 
-	domainSpec.OS.SMBios = &domainSchema.SMBios{Mode: "sysinfo"}
+	if baseBoardManufacturer, found := annotations[baseBoardManufacturerAnnotation]; !found {
+		log.Log.Infof("The '%s' attribute was not provided. Not configuring the baseboard manufacturer", baseBoardManufacturerAnnotation)
+	} else {
+		log.Log.Infof("Configuring the baseboard manufacturer to be '%s'", baseBoardManufacturer)
+		// Add a new /os/smbios node, with mode set to sysinfo
+		domainSpec.OS.SMBios = &domainSchema.SMBios{Mode: "sysinfo"}
 
-	if domainSpec.SysInfo == nil {
-		domainSpec.SysInfo = &domainSchema.SysInfo{}
-	}
-	domainSpec.SysInfo.Type = "smbios"
-	if baseBoardManufacturer, found := annotations[baseBoardManufacturerAnnotation]; found {
+		// Add an empty /sysinfo node if required
+		if domainSpec.SysInfo == nil {
+			domainSpec.SysInfo = &domainSchema.SysInfo{}
+		}
+
+		// Populate the sysinfo node with the required values.
+		domainSpec.SysInfo.Type = "smbios"
 		domainSpec.SysInfo.BaseBoard = append(domainSpec.SysInfo.BaseBoard, domainSchema.Entry{
 			Name:  "manufacturer",
 			Value: baseBoardManufacturer,
 		})
 	}
 
+	if videoModel, found := annotations[videoModelAnnotation]; !found {
+		log.Log.Infof("The '%s' attribute was not provided. Not configuring the video model", videoModelAnnotation)
+	} else {
+		log.Log.Infof("Configuring the video model to be '%s'", videoModel)
+
+		if len(domainSpec.Devices.Video) == 0 {
+			domainSpec.Devices.Video = append(domainSpec.Devices.Video, domainSchema.Video{})
+		}
+
+		domainSpec.Devices.Video[0].Model.Type = videoModel
+	}
+
 	newDomainXML, err := xml.Marshal(domainSpec)
 	if err != nil {
-		log.Log.Reason(err).Errorf("Failed to marshal updated domain spec: %s", domainSpec)
+		log.Log.Reason(err).Errorf("Failed to marshal updated domain spec: %s", err.Error())
 		panic(err)
 	}
 
-	log.Log.Info("Successfully updated original domain spec with requested SMBIOS attributes")
+	log.Log.Info("Successfully updated original domain spec with requested attributes")
 
 	return &hooksV1alpha1.OnDefineDomainResult{
 		DomainXML: newDomainXML,
@@ -114,9 +129,12 @@ func (s v1alpha1Server) OnDefineDomain(ctx context.Context, params *hooksV1alpha
 }
 
 func main() {
-	log.InitializeLogging("smbios-hook-sidecar")
+	// Start listening on /var/run/kubevirt-hooks/android-x86.sock,
+	// and register an infoServer (to expose information about this
+	// hook) and a callback server (which does the heavy lifting).
+	log.InitializeLogging("android-x86-hook-sidecar")
 
-	socketPath := hooks.HookSocketsSharedDirectory + "/smbios.sock"
+	socketPath := hooks.HookSocketsSharedDirectory + "/" + hookName + ".sock"
 	socket, err := net.Listen("unix", socketPath)
 	if err != nil {
 		log.Log.Reason(err).Errorf("Failed to initialized socket on path: %s", socket)
