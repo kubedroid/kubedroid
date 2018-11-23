@@ -33,20 +33,20 @@
 # files which Android-x86 releases.
 # -------------------------------------------------
 
-FROM quay.io/quamotion/android-x86-base:7.1-r2 AS base
+FROM quay.io/quamotion/android-x86-base:8.1-rc2 AS base
 
 ENV image_name=android-x86
 
 WORKDIR /android
 # Apply the patches
-COPY *.patch .
-RUN apt-get update \
-&& apt-get install -y patch \
-&& echo system/build.prop \
-&& ls -l *.patch \
-&& patch -p1 < android-x86.patch \
-&& echo system/build.prop \
-&& rm *.patch
+# COPY *.patch .
+# RUN apt-get update \
+# && apt-get install -y patch \
+# && echo system/build.prop \
+# && ls -l *.patch \
+# && patch -p1 < android-x86.patch \
+# && echo system/build.prop \
+# && rm *.patch
 
 # Update the ramdisk and initrd images
 RUN mkbootfs ./ramdisk | gzip > ramdisk.img \
