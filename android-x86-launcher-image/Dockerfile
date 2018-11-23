@@ -25,13 +25,8 @@ RUN dnf install -y dnf-plugins-core \
      libvirt-client-$LIBVIRT_VERSION \
      qemu-kvm-$QEMU_VERSION \
      libusbx-$LIBUSB_VERSION \
-&& dnf clean all
-
-RUN dnf install -y \
-      virglrenderer \
       mesa-dri-drivers \
 && dnf clean all
 
 RUN mv /usr/bin/virt-launcher /usr/bin/upstream-virt-launcher
 COPY --from=build /go/src/virt-launcher/virt-launcher /usr/bin/
-COPY enable-graphics.sh .

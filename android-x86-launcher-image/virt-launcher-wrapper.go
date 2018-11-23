@@ -7,15 +7,15 @@ import "os/exec"
 
 func main() {
     if os.Getenv("GRAPHICS_INITIALIZED") != "1" {
-        fmt.Print("Attempting to initialize graphics\n")
-
-        cmd := exec.Command("/bin/bash","/enable-graphics.sh")
+        fmt.Println("Granting qemu permissions to /dev/dri/renderD128")
+        cmd := exec.Command("/usr/bin/setfacl","-m", "u:qemu:rw", "/dev/dri/renderD128")
         cmdOut, err := cmd.Output()
+
+        fmt.Println(string(cmdOut))
+
         if err != nil {
             panic(err)
         }
-
-        fmt.Println(string(cmdOut))
 
         os.Setenv("GRAPHICS_INITIALIZED", "1")
     } else {
