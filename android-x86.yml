@@ -2,6 +2,15 @@ metadata:
   name: android-x86
 apiVersion: kubevirt.io/v1alpha2
 kind: VirtualMachineInstance
+metadata:
+  annotations:
+    hooks.kubevirt.io/hookSidecars: '[{"image": "quay.io/quamotion/android-x86-hook:7.1-r2"}]'
+    smbios.vm.kubevirt.io/baseBoardManufacturer: Radical Edward
+    video.vm.kubevirt.io/model: virtio
+# This requires a newer version of libvirt
+#    graphics.vm.kubevirt.io/eglHeadless: enabled
+    qemu.vm.kubevirt.io/args: '[ "-display", "egl-headless" ]'
+  name: android-x86
 spec:
   domain:
     resources:
