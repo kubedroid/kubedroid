@@ -20,7 +20,7 @@ make install
 apt-get -y install check libgbm-dev
 git clone https://github.com/freedesktop/virglrenderer
 cd virglrenderer
-./autogen.sh --enable-debug=yes --enable-tests
+CFLAGS='-g -O0' CXXFLAGS='-g -O0' ./autogen.sh --enable-debug=yes --enable-tests
 make -j8
 make install
 
