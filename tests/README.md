@@ -93,3 +93,18 @@ index 55d76405a9..7482e37063 100644
          return ret;
      }
 ```
+
+To try with an Ubuntu guest (this works; the default resolution appears to be 1024x768 at bith depth 24):
+
+```
+wget http://releases.ubuntu.com/18.04/ubuntu-18.04.1-desktop-amd64.iso
+qemu-img create -f qcow2 ubuntu-18.04-desktop-amd64.img.qcow2 16G
+qemu-system-x86_64 \
+  -cdrom ubuntu-18.04.1-desktop-amd64.iso \
+  -drive file=ubuntu-18.04-desktop-amd64.img.qcow2,format=qcow2 \
+  -enable-kvm \
+  -m 2G \
+  -smp 2 \
+  -vga virtio \
+  -display egl-headless
+```
