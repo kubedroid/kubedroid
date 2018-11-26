@@ -12,7 +12,7 @@ The commands below start the VM with and without GPU acceleration.
 # Libepoxy from source
 apt-get -y install git build-essential autoconf autogen libtool pkg-config xutils-dev libgles2-mesa-dev
 git clone https://github.com/anholt/libepoxy
-    ./autogen.sh
+./autogen.sh
 make -j8
 make install
 
@@ -42,7 +42,6 @@ docker run -v $(pwd):/target --rm quay.io/quamotion/android-x86-disk:7.1-r2 /bin
 docker pull quay.io/quamotion/android-x86-disk:8.1-rc2
 docker run -v $(pwd):/target --rm quay.io/quamotion/android-x86-disk:8.1-rc2 /bin/bash -c "cp /disk/android-x86.qcow2 /target/android-x86-8.1-rc2.qcow2"
 
-export 
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 qemu-system-x86_64 \
     -enable-kvm \
@@ -52,7 +51,7 @@ qemu-system-x86_64 \
     -netdev user,id=mynet,hostfwd=tcp::5555-:5555 -device virtio-net-pci,netdev=mynet \
     -vga virtio \
     -display egl-headless -vnc :0 \
-    -hda android-x86-7.1-r2.qcow2
+    -hda android-x86-7.1-r2.qcow2 \
     -D ~/qemu-logs
 ```
 
