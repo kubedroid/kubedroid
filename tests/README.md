@@ -37,7 +37,10 @@ make install
 ```
 cd ~
 docker pull quay.io/quamotion/android-x86-disk:7.1-r2
-docker run -v $(pwd):/target --rm quay.io/quamotion/android-x86-disk:7.1-r2 /bin/bash -c "cp /disk/* /target/"
+docker run -v $(pwd):/target --rm quay.io/quamotion/android-x86-disk:7.1-r2 /bin/bash -c "cp /disk/android-x86.qcow2 /target/android-x86-7.1-r2.qcow2
+
+docker pull quay.io/quamotion/android-x86-disk:8.1-rc2
+docker run -v $(pwd):/target --rm quay.io/quamotion/android-x86-disk:8.1-rc2 /bin/bash -c "cp /disk/android-x86.qcow2 /target/android-x86-8.1-rc2.qcow2
 
 export 
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
