@@ -66,3 +66,21 @@ bt
 frame 4
 info locals
 ```
+
+Or, from qemu/master with the following patch to force surfaceless rendering:
+
+```patch
+diff --git a/hw/display/virtio-gpu-3d.c b/hw/display/virtio-gpu-3d.c
+index 55d76405a9..7482e37063 100644
+--- a/hw/display/virtio-gpu-3d.c
++++ b/hw/display/virtio-gpu-3d.c
+@@ -624,7 +624,7 @@ int virtio_gpu_virgl_init(VirtIOGPU *g)
+ {
+     int ret;
+
+-    ret = virgl_renderer_init(g, 0, &virtio_gpu_3d_cbs);
++    ret = virgl_renderer_init(g, VIRGL_RENDERER_USE_SURFACELESS | VIRGL_RENDERER_USE_EGL, &virtio_gpu_3d_cbs);
+     if (ret != 0) {
+         return ret;
+     }
+```
