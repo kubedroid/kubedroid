@@ -45,6 +45,12 @@ make install
 
 ```
 cd ~
+docker pull quay.io/quamotion/android-x86-disk:5.1-rc1
+docker run -v $(pwd):/target --rm quay.io/quamotion/android-x86-disk:5.1-rc1 /bin/bash -c "cp /disk/android-x86.qcow2 /target/android-x86-5.1-rc1.qcow2"
+
+docker pull quay.io/quamotion/android-x86-disk:6.0-r3
+docker run -v $(pwd):/target --rm quay.io/quamotion/android-x86-disk:6.0-r3 /bin/bash -c "cp /disk/android-x86.qcow2 /target/android-x86-6.0-r3.qcow2"
+
 docker pull quay.io/quamotion/android-x86-disk:7.1-r2
 docker run -v $(pwd):/target --rm quay.io/quamotion/android-x86-disk:7.1-r2 /bin/bash -c "cp /disk/android-x86.qcow2 /target/android-x86-7.1-r2.qcow2"
 
@@ -107,4 +113,10 @@ qemu-system-x86_64 \
   -smp 2 \
   -vga virtio \
   -display egl-headless
+```
+
+Lame socat:
+
+```
+socat TCP-LISTEN:5901,fork TCP:127.0.0.1:5900
 ```
