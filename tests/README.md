@@ -51,7 +51,7 @@ qemu-system-x86_64 \
     -serial mon:stdio \
     -netdev user,id=mynet,hostfwd=tcp::5555-:5555 -device virtio-net-pci,netdev=mynet \
     -vga virtio \
-    -display egl-headless -vnc 0.0.0.0:5900 \
+    -display egl-headless -vnc :0 \
     -hda android-x86-7.1-r2.qcow2
     -D ~/qemu-logs
 ```
