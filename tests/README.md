@@ -10,22 +10,31 @@ The commands below start the VM with and without GPU acceleration.
 
 ```
 # Libepoxy from source
+cd ~
+apt-get update
 apt-get -y install git build-essential autoconf autogen libtool pkg-config xutils-dev libgles2-mesa-dev
-git clone https://github.com/anholt/libepoxy
+wget https://github.com/anholt/libepoxy/releases/download/1.5.3/libepoxy-1.5.3.tar.xz
+tar xvJf libepoxy-1.5.3.tar.xz
+cd libepoxy-1.5.3
 ./autogen.sh
 make -j8
 make install
 
 # Tools required to compile virglrenderer
+cd ~
 apt-get -y install check libgbm-dev
-git clone https://github.com/freedesktop/virglrenderer
-cd virglrenderer
-CFLAGS='-g -O0' CXXFLAGS='-g -O0' ./autogen.sh --enable-debug=yes --enable-tests
+wget https://github.com/freedesktop/virglrenderer/archive/virglrenderer-0.7.0.tar.gz
+tar xvzf virglrenderer-0.7.0.tar.gz
+mv virglrenderer-virglrenderer-0.7.0/ virglrenderer-0.7.0/
+cd virglrenderer-0.7.0
+# CFLAGS='-g -O0' CXXFLAGS='-g -O0' ./autogen.sh --enable-debug=yes --enable-tests
+./autogen.sh --enable-tests
 make -j8
 make install
 
 # qemu
-apt-get install -y libz-dev libglib2.0-dev libplixman-1-dev
+cd ~
+apt-get install -y libz-dev libglib2.0-dev libpixman-1-dev
 wget https://download.qemu.org/qemu-3.0.0.tar.xz
 tar xvJf qemu-3.0.0.tar.xz
 cd qemu-3.0.0
