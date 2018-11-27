@@ -55,6 +55,14 @@ Or, in one command:
 adb connect `kubectl  get -o=jsonpath='{.status.interfaces[0].ipAddress}' vmi android-x86`:555
 ```
 
+## Initializing your VM
+`adb` is enabled by default, so you can `adb connect [VM IP]:5555` to get a connection to your VM.
+
+You may want to configure your VM over adb. For example, you may want to:
+
+- Enable *unknown sources*: `adb shell settings put secure install_non_market_apps 1`
+- 
+
 ## References
 
 ### Hardware acceleration
