@@ -1,0 +1,10 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: ubuntu
+spec:
+  containers:
+    - name: ubuntu
+      image: ubuntu:bionic
+      command: [ "/bin/bash", "-c", "trap : TERM INT; sleep infinity & wait" ]
+  restartPolicy: Never  
