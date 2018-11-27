@@ -62,6 +62,7 @@ You may want to configure your VM over adb. For example, you may want to:
 
 - Enable *unknown sources*: `adb shell settings put secure install_non_market_apps 1`
 - Disable package verifiers: `adb shell settings put global package_verifier_enable 0`
+- Disable the non-standard launcher (from a root shell): `pm disable com.farmerbb.taskbar.androidx86`
 
 ## References
 
