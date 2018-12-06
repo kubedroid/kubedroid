@@ -21,7 +21,7 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
-        image: quay.io/quamotion/intel-vgpu-plugin:latest
+        image: quay.io/quamotion/intel-vgpu-plugin:vgpu
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: devfs
