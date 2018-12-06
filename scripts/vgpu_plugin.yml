@@ -1,27 +1,27 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: intel-gpu-plugin
+  name: intel-vgpu-plugin
   namespace: kube-system
   labels:
-    app: intel-gpu-plugin
+    app: intel-vgpu-plugin
 spec:
   selector:
     matchLabels:
-      app: intel-gpu-plugin
+      app: intel-vgpu-plugin
   template:
     metadata:
       labels:
-        app: intel-gpu-plugin
+        app: intel-vgpu-plugin
     spec:
       containers:
-      - name: intel-gpu-plugin
+      - name: intel-vgpu-plugin
         env:
           - name: NODE_NAME
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
-        image: quay.io/quamotion/intel-gpu-plugin:latest
+        image: quay.io/quamotion/intel-vgpu-plugin:latest
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: devfs
