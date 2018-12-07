@@ -8,12 +8,15 @@ metadata:
     smbios.vm.kubevirt.io/baseBoardManufacturer: Radical Edward
     video.vm.kubevirt.io/vgpu: "a297db4a-f4c2-11e6-90f6-d3b88d6c9525"
     graphics.vm.kubevirt.io/eglHeadless: "true"
+    video.vm.kubevirt.io/model: "none"
   name: android-x86
 spec:
   domain:
+    cpu:
+      cores: 2
     resources:
       requests:
-        memory: 2G
+        memory: 4Gi
       # This will request an Intel vGPU for the Android-x86 pod.
       # It requires the Intel GPU device plugin, see
       # https://github.com/kubedroid/intel-device-plugins-for-kubernetes/tree/vgpu
