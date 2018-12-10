@@ -1,5 +1,5 @@
 #!/bin/bash
-RELEASE=v0.10.0
+RELEASE=v0.12.0-alpha.0
 kubectl apply -f https://github.com/kubevirt/kubevirt/releases/download/${RELEASE}/kubevirt.yaml
 
 curl -L https://github.com/kubevirt/kubevirt/releases/download/${RELEASE}/virtctl-${RELEASE}-linux-amd64 -o /usr/local/bin/virtctl
