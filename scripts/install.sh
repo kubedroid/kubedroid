@@ -25,7 +25,7 @@ mkdir $HOME/.kube || true
 touch $HOME/.kube/config
 
 export KUBECONFIG=$HOME/.kube/config
-sudo -E ./minikube start --kubernetes-version v1.12.2 --vm-driver=none --extra-config=apiserver.authorization-mode=RBAC --apiserver-ips="127.0.0.1"
+sudo -E ./minikube start --kubernetes-version v1.13.0 --vm-driver=none --extra-config=apiserver.authorization-mode=RBAC --apiserver-ips="127.0.0.1"
 
 # this for loop waits until kubectl can access the api server that Minikube has created
 for i in {1..150}; do # timeout for 5 minutes
