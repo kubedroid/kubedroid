@@ -25,11 +25,11 @@ spec:
         gpu.intel.com/i915: 1
     devices:
       disks:
-      - name: registrydisk
-        volumeName: registryvolume
+      - name: containerDisk
+        volumeName: containerVolume
         disk:
           bus: virtio
   volumes:
-    - name: registryvolume
-      registryDisk:
+    - name: containerVolume
+      containerDisk:
         image: quay.io/quamotion/android-x86-disk:7.1-r2
