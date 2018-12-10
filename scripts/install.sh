@@ -14,8 +14,8 @@ systemctl stop systemd-resolved
 ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
 
 # Configure minikube
-curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube
-curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl
+curl -L minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 -o /usr/local/bin/minikube && chmod +x /usr/local/bin/minikube
+curl -L kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
 
 export MINIKUBE_WANTUPDATENOTIFICATION=false
 export MINIKUBE_WANTREPORTERRORPROMPT=false
@@ -25,7 +25,7 @@ mkdir $HOME/.kube || true
 touch $HOME/.kube/config
 
 export KUBECONFIG=$HOME/.kube/config
-sudo -E ./minikube start --kubernetes-version v1.13.0 --vm-driver=none --extra-config=apiserver.authorization-mode=RBAC --apiserver-ips="127.0.0.1"
+sudo -E minikube start --kubernetes-version v1.13.0 --vm-driver=none --extra-config=apiserver.authorization-mode=RBAC --apiserver-ips="127.0.0.1"
 
 # this for loop waits until kubectl can access the api server that Minikube has created
 for i in {1..150}; do # timeout for 5 minutes
