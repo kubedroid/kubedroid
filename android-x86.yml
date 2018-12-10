@@ -26,10 +26,10 @@ spec:
     devices:
       disks:
       - name: containerDisk
-        volumeName: containerVolume
+        volumeName: containervolume
         disk:
           bus: virtio
   volumes:
-    - name: containerVolume
+    - name: containervolume
       containerDisk:
         image: quay.io/quamotion/android-x86-disk:7.1-r2
