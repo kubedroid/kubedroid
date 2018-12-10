@@ -4,7 +4,7 @@ apiVersion: kubevirt.io/v1alpha2
 kind: VirtualMachineInstance
 metadata:
   annotations:
-    hooks.kubevirt.io/hookSidecars: '[{"image": "quay.io/quamotion/android-x86-hook:7.1-r2"}]'
+    hooks.kubevirt.io/hookSidecars: '[{"image": "quay.io/quamotion/android-x86-hook:v0.1"}]'
     smbios.vm.kubevirt.io/baseBoardManufacturer: Radical Edward
     video.vm.kubevirt.io/vgpu: "a297db4a-f4c2-11e6-90f6-d3b88d6c9525"
     graphics.vm.kubevirt.io/eglHeadless: "true"
