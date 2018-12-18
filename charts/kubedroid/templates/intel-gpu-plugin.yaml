@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "kubedroid.fullname" . }}-intel-gpu-plugin
+  labels:
+    app.kubernetes.io/name: {{ include "kubedroid.name" . }}-intel-gpu-plugin
+    helm.sh/chart: {{ include "kubedroid.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "kubedroid.name" . }}-intel-gpu-plugin
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "kubedroid.name" . }}-intel-gpu-plugin
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: intel-gpu-plugin
+          image: "{{ .Values.image.repository }}/intel-gpu-plugin:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          volumeMounts:
+          - name: devfs
+            mountPath: /dev
+          - name: sysfs
+            mountPath: /sys
+          - name: kubeletsockets
+            mountPath: /var/lib/kubelet/device-plugins
+      volumes:
+      - name: devfs
+        hostPath:
+          path: /dev
+      - name: sysfs
+        hostPath:
+          path: /sys
+      - name: kubeletsockets
+        hostPath:
+          path: /var/lib/kubelet/device-plugins

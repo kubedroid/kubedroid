@@ -1,0 +1,26 @@
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: {{ include "kubedroid.fullname" . }}-android-x86-injector
+  labels:
+    app.kubernetes.io/name: {{ include "kubedroid.name" . }}-android-x86-injector
+    helm.sh/chart: {{ include "kubedroid.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+webhooks:
+  - name: admission-webhook.kubedroid.io
+    rules:
+      - operations: [ "CREATE" ]
+        apiGroups: [ "" ]
+        apiVersions: [ "v1" ]
+        resources: [ "pods" ]
+    failurePolicy: Fail
+    clientConfig:
+      service:
+        name: {{ include "kubedroid.fullname" . }}-android-x86-injector
+        namespace: {{ .Release.Namespace }}
+        path: "/mutate"
+      caBundle: ""
+    namespaceSelector:
+      matchLabels:
+        android-x86-injection: enabled

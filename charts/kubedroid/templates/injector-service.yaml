@@ -1,0 +1,17 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kubedroid.fullname" . }}-android-x86-injector
+  labels:
+    app.kubernetes.io/name: {{ include "kubedroid.name" . }}-android-x86-injector
+    helm.sh/chart: {{ include "kubedroid.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  ports:
+  - port: 443
+    targetPort: 443
+  selector:
+    app.kubernetes.io/name: {{ include "kubedroid.name" . }}-android-x86-injector
+    app.kubernetes.io/instance: {{ .Release.Name }}
