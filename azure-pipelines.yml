@@ -10,10 +10,12 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
 - script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    helm init --client-only
+    helm package --version 0.1.0-${BUILD_BUILDID} charts/kubedroid --destination ${BUILD_ARTIFACTSTAGINGDIRECTORY} --save false
+  displayName: 'Build helm chart'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: drop
